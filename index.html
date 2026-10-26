@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1ECSPBM · Items without Solution Area</title>
+<style>
+:root {
+  --sap-shell:   #354a5e;
+  --sap-blue:    #0070f2;
+  --sap-blue-lt: #e8f3ff;
+  --sap-bg:      #f5f6f7;
+  --sap-card:    #ffffff;
+  --sap-border:  #e5e5e5;
+  --sap-text:    #32363a;
+  --sap-text2:   #6a6d70;
+  --sap-text3:   #a5a5a5;
+  --header-h:    44px;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: '72','72full',Arial,Helvetica,sans-serif;
+  background: var(--sap-bg);
+  color: var(--sap-text);
+  font-size: 14px;
+  line-height: 1.4;
+  min-height: 100vh;
+}
+
+/* ── SHELL HEADER ──────────────────────────────── */
+.shell-header {
+  background: var(--sap-shell);
+  height: var(--header-h);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 14px;
+  position: sticky; top: 0; z-index: 200;
+  box-shadow: 0 2px 8px rgba(0,0,0,.25);
+}
+.shell-logo {
+  background: #fff;
+  color: #009de0;
+  font-weight: 700;
+  font-size: 12px;
+  padding: 3px 6px;
+  border-radius: 2px;
+  letter-spacing: .5px;
+  flex-shrink: 0;
+}
+.shell-title {
+  color: rgba(255,255,255,.92);
+  font-size: 15px;
+  font-weight: 400;
+  flex: 1;
+}
+.shell-badge {
+  background: rgba(255,255,255,.15);
+  color: #fff;
+  font-size: 12px;
+  padding: 3px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.3);
+  white-space: nowrap;
+}
+
+/* ── PAGE ──────────────────────────────────────── */
+.page-body {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ── CARD ──────────────────────────────────────── */
+.card {
+  background: var(--sap-card);
+  border: 1px solid var(--sap-border);
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.06);
+}
+.card-header {
+  padding: 12px 16px 10px;
+  border-bottom: 1px solid var(--sap-border);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.card-title { font-size: 15px; font-weight: 600; flex: 1; }
+.card-subtitle { font-size: 12px; color: var(--sap-text2); }
+.card-body { padding: 14px 16px; }
+
+/* ── FILTER BAR ────────────────────────────────── */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: flex-end;
+}
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.filter-group label {
+  font-size: 11px;
+  color: var(--sap-text2);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+}
+.filter-group input,
+.filter-group select {
+  height: 32px;
+  padding: 0 8px;
+  border: 1px solid var(--sap-border);
+  border-radius: 4px;
+  font-size: 13px;
+  font-family: inherit;
+  color: var(--sap-text);
+  background: #fff;
+  outline: none;
+  transition: border-color .15s;
+}
+.filter-group input:focus,
+.filter-group select:focus {
+  border-color: var(--sap-blue);
+  box-shadow: 0 0 0 2px var(--sap-blue-lt);
+}
+.filter-group input[type="search"] { width: 220px; }
+.filter-group select               { min-width: 140px; }
+
+.btn {
+  height: 32px;
+  padding: 0 14px;
+  border: 1px solid var(--sap-border);
+  border-radius: 4px;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background .15s, border-color .15s;
+  white-space: nowrap;
+}
+.btn-primary {
+  background: var(--sap-blue);
+  color: #fff;
+  border-color: var(--sap-blue);
+}
+.btn-primary:hover { background: #0057c2; border-color: #0057c2; }
+.btn-default { background: #fff; color: var(--sap-text); }
+.btn-default:hover { background: var(--sap-blue-lt); border-color: var(--sap-blue); }
+.btn-export {
+  background: #107e3e;
+  color: #fff;
+  border-color: #107e3e;
+}
+.btn-export:hover { background: #0b5e2e; border-color: #0b5e2e; }
+
+.filter-spacer { flex: 1; }
+.filter-actions {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+  margin-left: auto;
+}
+
+/* ── STATUS INDICATOR ──────────────────────────── */
+#refresh-status {
+  font-size: 12px;
+  color: var(--sap-text2);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+#refresh-status.loading { color: var(--sap-blue); }
+#refresh-status.error   { color: #bb0000; }
+#refresh-status.ok      { color: #107e3e; }
+
+/* ── TABLE ─────────────────────────────────────── */
+.table-wrap {
+  overflow-x: auto;
+  border-radius: 0 0 6px 6px;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+thead th {
+  background: #f0f2f3;
+  border-bottom: 2px solid var(--sap-border);
+  padding: 9px 10px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 12px;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  position: sticky;
+  top: 0;
+}
+thead th:hover { background: var(--sap-blue-lt); color: var(--sap-blue); }
+thead th.sort-asc::after  { content: " ▲"; font-size: 10px; }
+thead th.sort-desc::after { content: " ▼"; font-size: 10px; }
+
+tbody tr { border-bottom: 1px solid var(--sap-border); }
+tbody tr:nth-child(even) { background: #fafafa; }
+tbody tr:hover { background: var(--sap-blue-lt); }
+
+td {
+  padding: 8px 10px;
+  vertical-align: top;
+  max-width: 280px;
+}
+td.cell-key { white-space: nowrap; font-weight: 600; }
+td.cell-key a {
+  color: var(--sap-blue);
+  text-decoration: none;
+}
+td.cell-key a:hover { text-decoration: underline; }
+td.cell-summary { min-width: 200px; word-break: break-word; }
+td.cell-date    { white-space: nowrap; }
+td.cell-empty   { color: var(--sap-text3); }
+
+/* ── STATUS PILL ────────────────────────────────── */
+.pill {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.pill-external { background: #d1f0e0; color: #0b5e2e; }
+.pill-internal { background: #e8f3ff; color: #0057c2; }
+
+/* ── PAGE TITLE BLOCK ───────────────────────────── */
+.page-title-block {
+  background: var(--sap-card);
+  border: 1px solid var(--sap-border);
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.06);
+  padding: 18px 20px 16px;
+  border-left: 4px solid var(--sap-blue);
+}
+.page-title-block h1 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--sap-text);
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+.page-title-block p {
+  font-size: 13px;
+  color: var(--sap-text2);
+  line-height: 1.65;
+  max-width: 1100px;
+}
+
+/* ── FOOTER ─────────────────────────────────────── */
+.table-footer {
+  padding: 8px 16px;
+  border-top: 1px solid var(--sap-border);
+  font-size: 12px;
+  color: var(--sap-text2);
+  background: #fafafa;
+  border-radius: 0 0 6px 6px;
+}
+
+/* ── EMPTY STATE ─────────────────────────────────── */
+.empty-state {
+  padding: 60px 20px;
+  text-align: center;
+  color: var(--sap-text2);
+  font-size: 14px;
+}
+.empty-state strong { display: block; font-size: 16px; margin-bottom: 6px; color: var(--sap-text); }
+
+/* ── LOADING OVERLAY ─────────────────────────────── */
+#loading-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(255,255,255,.65);
+  z-index: 999;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: var(--sap-blue);
+  flex-direction: column;
+  gap: 12px;
+}
+#loading-overlay.visible { display: flex; }
+.spinner {
+  width: 36px; height: 36px;
+  border: 4px solid var(--sap-blue-lt);
+  border-top-color: var(--sap-blue);
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<!-- LOADING OVERLAY -->
+<div id="loading-overlay">
+  <div class="spinner"></div>
+  <span>Loading Jira data…</span>
+</div>
+
+<!-- SHELL HEADER -->
+<header class="shell-header">
+  <span class="shell-logo">SAP</span>
+  <span class="shell-title">1ECSPBM · Features &amp; User Stories · CAE Receiving Units · without Solution Area</span>
+  <span class="shell-badge" id="header-badge">–</span>
+</header>
+
+<!-- PAGE BODY -->
+<div class="page-body">
+
+  <!-- PAGE TITLE -->
+  <div class="page-title-block">
+    <h1>Technical Data Validation – Roadmap Tickets</h1>
+    <p>This view identifies tickets from 1ECSPBM SAP Jira that are marked as roadmap-relevant (internal or external) but do not contain a valid platform assignment. Due to this missing mandatory information, these records do not meet the requirements for proper processing and inclusion in the roadmap. The list is intended to support the identification and correction of inconsistent data.</p>
+  </div>
+
+  <!-- FILTER CARD -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Filter &amp; Actions</span>
+      <span class="card-subtitle" id="last-updated-label">Last updated: –</span>
+    </div>
+    <div class="card-body">
+      <div class="filter-bar">
+
+        <div class="filter-group">
+          <label>Search</label>
+          <input type="search" id="f-search" placeholder="Key or Summary …">
+        </div>
+
+        <div class="filter-group">
+          <label>Status</label>
+          <select id="f-status"><option value="">All Statuses</option></select>
+        </div>
+
+        <div class="filter-group">
+          <label>Roadmap Relevance</label>
+          <select id="f-roadmap">
+            <option value="">All</option>
+            <option value="Yes - External Roadmap">External Roadmap</option>
+            <option value="Yes - Internal Roadmap">Internal Roadmap</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>Mgmt Status</label>
+          <select id="f-mgmt"><option value="">All</option></select>
+        </div>
+
+        <div class="filter-group">
+          <label>Requesting Unit</label>
+          <select id="f-requesting"><option value="">All</option></select>
+        </div>
+
+        <div class="filter-group">
+          <label>Receiving Unit</label>
+          <select id="f-receiving"><option value="">All</option></select>
+        </div>
+
+        <div class="filter-actions">
+          <span id="refresh-status"></span>
+          <button class="btn btn-default" id="btn-reset" title="Reset all filters">
+            ↺ Reset Filters
+          </button>
+          <button class="btn btn-primary" id="btn-refresh" title="Reload data from Jira">
+            ⟳ Refresh
+          </button>
+          <button class="btn btn-export" id="btn-export" title="Export filtered data as CSV">
+            ↓ Export CSV
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- TABLE CARD -->
+  <div class="card">
+    <div class="table-wrap">
+      <table id="issues-table">
+        <thead>
+          <tr>
+            <th data-col="key">Key</th>
+            <th data-col="issueType">Issue Type</th>
+            <th data-col="status">Status</th>
+            <th data-col="mgmtStatus">Mgmt Status</th>
+            <th data-col="summary">Summary</th>
+            <th data-col="roadmapRelevance">Roadmap Relevance</th>
+            <th data-col="pdd">PDD</th>
+            <th data-col="rtcd">RTCD</th>
+            <th data-col="receivingUnit">Receiving Unit</th>
+            <th data-col="sponsor">Sponsor</th>
+            <th data-col="created">Created</th>
+            <th data-col="updated">Updated</th>
+          </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+      </table>
+      <div id="empty-state" class="empty-state" style="display:none">
+        <strong>No issues found</strong>
+        No issues match the current filter criteria.
+      </div>
+    </div>
+    <div class="table-footer" id="table-footer">Loading data …</div>
+  </div>
+
+</div>
+
+<script>
+window.jiraData = [
+  {"key":"1ECSPBM-19007","issueType":"Feature","status":"In Progress","mgmtStatus":"Green","summary":"Database Architecture Support for SAP IQ Snappy Backup Roadmap","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2027-03-31","rtcd":"2027-03-31","solutionAreas":"","requestingUnit":"CAE – Technology & Architecture","receivingUnit":"CAE – Technology & Architecture","sponsor":"D067250","created":"2026-09-21 14:05:41","updated":"2026-10-26 06:09:17"},
+  {"key":"1ECSPBM-18176","issueType":"Feature","status":"In Progress","mgmtStatus":"Black","summary":"[ENABLE] HANA Audit Policies Review Process during Brownfield Migrations - Rollout for GCE Migration","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-12-31","rtcd":"2026-12-31","solutionAreas":"","requestingUnit":"DEL – TechOps – Database","receivingUnit":"CAE – Data Management","sponsor":"D062709","created":"2026-08-03 05:59:27","updated":"2026-10-21 04:56:37"},
+  {"key":"1ECSPBM-19283","issueType":"Feature","status":"In Progress","mgmtStatus":"Green","summary":"Apply One-off HVR Configuration for COP","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-10-31","rtcd":"2026-10-31","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"D062709","created":"2026-10-06 07:28:37","updated":"2026-10-20 06:04:22"},
+  {"key":"1ECSPBM-17728","issueType":"Feature","status":"In Progress","mgmtStatus":"Black","summary":"[EVALUATE] AI Analysis / AI Answer System for ECSCTOCH Tickets ","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-12-31","rtcd":"2026-12-31","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"D062709","created":"2026-07-21 05:31:43","updated":"2026-10-20 05:50:20"},
+  {"key":"1ECSPBM-16619","issueType":"Feature","status":"In Review","mgmtStatus":"","summary":"[ENABLE]: CyberArk SIA solution with Break Glass enablement on HEC2.0 CGS/CMS and HEC 3.0 CGS/CSN","roadmapRelevance":"Yes - Internal Roadmap","pdd":"","rtcd":"","solutionAreas":"","requestingUnit":"DEL – TechOps – Server Management","receivingUnit":"CAE – Technology & Architecture","sponsor":"D073315","created":"2026-04-30 03:09:22","updated":"2026-10-19 08:20:52"},
+  {"key":"1ECSPBM-17771","issueType":"Feature","status":"In Progress","mgmtStatus":"Green","summary":"Github Implementation and Rollout - HANA","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-11-30","rtcd":"2026-11-30","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"D062709","created":"2026-07-21 10:10:44","updated":"2026-10-19 05:37:22"},
+  {"key":"1ECSPBM-17718","issueType":"Feature","status":"Closed","mgmtStatus":"Yellow","summary":"CyberArk -Secure Access to SAP Applications Success Criteria 3 (SC3) Short-Term Approach","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-09-30","rtcd":"2026-09-30","solutionAreas":"","requestingUnit":"CAE – Chief Security Office","receivingUnit":"CAE – Chief Security Office","sponsor":"I565542","created":"2026-07-20 14:24:34","updated":"2026-10-16 14:46:29"},
+  {"key":"1ECSPBM-10488","issueType":"Feature","status":"In Progress","mgmtStatus":"Yellow","summary":"CyberArk -Secure Access to SAP Applications Success Criteria 3 (SC3) Long-Term Approach","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2027-06-30","rtcd":"2027-06-30","solutionAreas":"","requestingUnit":"CAE – Chief Security Office","receivingUnit":"CAE – Chief Security Office","sponsor":"I565542","created":"2025-02-04 15:43:58","updated":"2026-10-16 12:34:04"},
+  {"key":"1ECSPBM-18762","issueType":"Feature","status":"In Progress","mgmtStatus":"Green","summary":"Github Implementation and Rollout - non-HANA","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-12-31","rtcd":"2026-12-31","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"D062709","created":"2026-09-03 07:19:17","updated":"2026-10-15 04:54:42"},
+  {"key":"1ECSPBM-16201","issueType":"Feature","status":"In Progress","mgmtStatus":"Green","summary":"Intelligent ZOR Pilot: End-to-End Incident Intelligence (ZORRO) - Phase 1","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-06-30","rtcd":"2026-06-30","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2026-03-26 05:44:00","updated":"2026-10-14 14:40:45"},
+  {"key":"1ECSPBM-18778","issueType":"Feature","status":"In Review","mgmtStatus":"","summary":"AWS: Enable Production onboarding of the AWS Operator Companion Agent","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-11-13","rtcd":"2026-11-13","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Technology & Architecture","sponsor":"I825542","created":"2026-09-03 15:12:32","updated":"2026-10-13 11:29:35"},
+  {"key":"1ECSPBM-15101","issueType":"Feature","status":"In Progress","mgmtStatus":"Black","summary":"Identify ways of logging for termination signals sent to HANA services like indexserver","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-12-31","rtcd":"2026-12-31","solutionAreas":"","requestingUnit":"DEL – TechOps – Database","receivingUnit":"CAE – Data Management","sponsor":"D062709","created":"2026-01-21 11:09:24","updated":"2026-10-13 07:36:53"},
+  {"key":"1ECSPBM-19245","issueType":"Feature","status":"In Review","mgmtStatus":"Green","summary":"[EVALUATE] Enhance sapmonuser on ASE to Allow SQL Editor Queries in DBAcockpit","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-12-31","rtcd":"2026-12-31","solutionAreas":"","requestingUnit":"DEL – TSM","receivingUnit":"CAE – Data Management","sponsor":"D062709","created":"2026-10-05 12:34:54","updated":"2026-10-12 09:14:06"},
+  {"key":"1ECSPBM-19376","issueType":"Feature","status":"In Review","mgmtStatus":"Green","summary":"HANA Monitoring Automation Readiness and Documentation Harmonization","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-12-31","rtcd":"2026-12-31","solutionAreas":"","requestingUnit":"CAE – Technology & Architecture","receivingUnit":"CAE – Data Management","sponsor":"D062709","created":"2026-10-08 05:53:31","updated":"2026-10-12 08:59:14"},
+  {"key":"1ECSPBM-17710","issueType":"Feature","status":"In Progress","mgmtStatus":"Green","summary":"[EVALUATE] HANA Fast Restart Option Assessment (Gaps)- Phase 1","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-12-31","rtcd":"2026-12-31","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"D062709","created":"2025-07-08 13:47:35","updated":"2026-10-07 10:48:33"},
+  {"key":"1ECSPBM-17091","issueType":"Feature","status":"In Progress","mgmtStatus":"Green","summary":"Define DB Architecture on HANA Cloud","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-12-31","rtcd":"2026-12-31","solutionAreas":"","requestingUnit":"CAE – Service Engineering","receivingUnit":"CAE – Data Management","sponsor":"D062709","created":"2026-06-03 18:13:08","updated":"2026-10-07 10:16:31"},
+  {"key":"1ECSPBM-15256","issueType":"Feature","status":"Released","mgmtStatus":"Green","summary":"Intelligent Monitoring of System Startup Time","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-09-30","rtcd":"2026-09-30","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"D062709","created":"2026-01-28 18:56:48","updated":"2026-10-06 05:29:22"},
+  {"key":"1ECSPBM-15754","issueType":"Feature","status":"Closed","mgmtStatus":"","summary":"[ENABLE] STACKIT Cloud : SAC Agent Enablement","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-11-30","rtcd":"2027-04-30","solutionAreas":"","requestingUnit":"CAE – Service Engineering","receivingUnit":"CAE – Service Engineering","sponsor":"D069417","created":"2026-02-25 15:11:10","updated":"2026-10-06 04:20:20"},
+  {"key":"1ECSPBM-18714","issueType":"Feature","status":"Released","mgmtStatus":"Green","summary":"DB2 Template Migration to Step-Based Sizing","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-09-30","rtcd":"2026-10-19","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"D062709","created":"2026-08-31 09:37:49","updated":"2026-10-05 08:56:25"},
+  {"key":"1ECSPBM-16049","issueType":"Feature","status":"Closed","mgmtStatus":"","summary":"CyberArk Secure Access to Infrastructure​  (SC1) - Phase  7 - Go Live – Linux & Users transition to  CyberArk​ (EOS)","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-09-30","rtcd":"","solutionAreas":"","requestingUnit":"CAE – Chief Security Office","receivingUnit":"CAE – Chief Security Office","sponsor":"I565542","created":"2026-03-18 14:28:50","updated":"2026-10-02 12:04:46"},
+  {"key":"1ECSPBM-14555","issueType":"Feature","status":"In Preparation","mgmtStatus":"Green","summary":"AWS: Evaluate feasibility to setup monitoring for NLB &ALB ","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-06-30","rtcd":"2026-06-30","solutionAreas":"","requestingUnit":"CAE – Technology & Architecture","receivingUnit":"CAE – Technology & Architecture","sponsor":"D062709","created":"2025-12-08 04:20:08","updated":"2026-09-28 05:28:54"},
+  {"key":"1ECSPBM-16438","issueType":"Feature","status":"Closed","mgmtStatus":"Green","summary":"[EVALUATE] S/4HANA PCE on HANA Cloud","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-06-30","rtcd":"2026-06-30","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"D062709","created":"2026-04-14 13:11:58","updated":"2026-09-24 06:08:54"},
+  {"key":"1ECSPBM-13697","issueType":"Feature","status":"Closed","mgmtStatus":"Green","summary":"AWS: Instance Recommendation Tool added to AWS Toolbox","roadmapRelevance":"Yes - Internal Roadmap","pdd":"","rtcd":"","solutionAreas":"","requestingUnit":"CAE – Technology & Architecture","receivingUnit":"CAE – Technology & Architecture","sponsor":"D062709","created":"2025-10-26 20:51:49","updated":"2026-09-21 16:39:08"},
+  {"key":"1ECSPBM-17642","issueType":"Feature","status":"In Progress","mgmtStatus":"","summary":"Azure DB2 - Backup Enablement","roadmapRelevance":"Yes - Internal Roadmap","pdd":"","rtcd":"","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Technology & Architecture","sponsor":"I825542","created":"2026-07-15 05:47:18","updated":"2026-09-15 07:28:00"},
+  {"key":"1ECSPBM-3582","issueType":"Feature","status":"Released","mgmtStatus":"","summary":"Data Management Service for BRIM – Expand archiving to include FICA ","roadmapRelevance":"Yes - External Roadmap","pdd":"2023-06-01","rtcd":"2023-07-01","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2023-03-03 03:19:12","updated":"2026-09-09 07:02:15"},
+  {"key":"1ECSPBM-12693","issueType":"Feature","status":"Released","mgmtStatus":"Green","summary":"DB2 Reference Architecture Review","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-03-15","rtcd":"2026-03-15","solutionAreas":"","requestingUnit":"CAE – Cloud Architect and Advisory","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2025-07-30 15:12:13","updated":"2026-09-09 07:00:07"},
+  {"key":"1ECSPBM-1530","issueType":"Feature","status":"Released","mgmtStatus":"Green","summary":"[ENABLE] Benchmarking - Enabling Zonal Deployments for ASE in AZURE, While Using AFS","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2023-12-31","rtcd":"2023-12-31","solutionAreas":"","requestingUnit":"CAE – Technology & Architecture","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2022-08-14 17:14:45","updated":"2026-09-09 06:56:10"},
+  {"key":"1ECSPBM-6168","issueType":"Feature","status":"Released","mgmtStatus":"","summary":"SAP IQ – Support Incident Failover - AWS","roadmapRelevance":"Yes - External Roadmap","pdd":"2024-03-31","rtcd":"2024-03-31","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2024-01-22 15:13:26","updated":"2026-09-09 06:53:54"},
+  {"key":"1ECSPBM-13377","issueType":"Feature","status":"Closed","mgmtStatus":"Green","summary":"SR involflt Module Error on P26HIL (Sybase IQ System) - POC Required for ASR on Sybase IQ","roadmapRelevance":"Yes - Internal Roadmap","pdd":"","rtcd":"","solutionAreas":"","requestingUnit":"DEL – TechOps – Server Management","receivingUnit":"CAE – Data Management","sponsor":"I350452","created":"2025-09-26 11:57:18","updated":"2026-09-09 06:53:53"},
+  {"key":"1ECSPBM-6167","issueType":"Feature","status":"Released","mgmtStatus":"","summary":"SAP IQ – Support Incident Failover AZURE","roadmapRelevance":"Yes - External Roadmap","pdd":"2024-03-31","rtcd":"2024-03-31","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2024-01-22 15:12:42","updated":"2026-09-09 06:53:52"},
+  {"key":"1ECSPBM-6404","issueType":"Feature","status":"Released","mgmtStatus":"Yellow","summary":"HANA new features (Numa  Enablement)","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2024-09-30","rtcd":"2024-09-30","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2023-11-07 02:25:51","updated":"2026-09-09 06:48:36"},
+  {"key":"1ECSPBM-13552","issueType":"Feature","status":"Released","mgmtStatus":"Green","summary":"[EVALUATE] HANA on Alicloud ","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2025-12-31","rtcd":"2025-12-31","solutionAreas":"","requestingUnit":"CAE – Technology & Architecture","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2025-10-13 11:38:23","updated":"2026-09-09 06:48:35"},
+  {"key":"1ECSPBM-3562","issueType":"Feature","status":"Released","mgmtStatus":"","summary":"Performance Benchmarking of Snapshot Restores on AWS for HANA","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2023-03-31","rtcd":"2023-06-30","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2023-03-02 09:15:44","updated":"2026-09-09 06:48:28"},
+  {"key":"1ECSPBM-7405","issueType":"Feature","status":"Closed","mgmtStatus":"Yellow","summary":"HANA NSE: Guidance and RA update","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2024-06-30","rtcd":"2024-09-30","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2024-03-31 19:29:26","updated":"2026-09-09 06:48:26"},
+  {"key":"1ECSPBM-12160","issueType":"Feature","status":"Closed","mgmtStatus":"Green","summary":"Define Kernel Parameters for CDC BareMetals which are having  menory 2TB and more","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2025-09-30","rtcd":"2025-09-30","solutionAreas":"","requestingUnit":"CAE – Cloud Data Center","receivingUnit":"CAE – Data Management","sponsor":"I545746","created":"2025-06-16 15:06:33","updated":"2026-09-09 06:48:25"},
+  {"key":"1ECSPBM-15005","issueType":"Feature","status":"Closed","mgmtStatus":"Green","summary":"Operator Support AI Companion- AWS integration","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-03-31","rtcd":"2026-03-31","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2026-01-19 08:05:59","updated":"2026-09-08 19:50:01"},
+  {"key":"1ECSPBM-17277","issueType":"Feature","status":"In Progress","mgmtStatus":"Green","summary":"GCO Agentic AI Hub - Governance Framework","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-08-24","rtcd":"2026-08-26","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2026-06-18 06:54:30","updated":"2026-09-07 07:24:16"},
+  {"key":"1ECSPBM-16197","issueType":"Feature","status":"In Progress","mgmtStatus":"Green","summary":"GCO Agentic AI Hub - Q2 Enhancements","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-06-30","rtcd":"2026-06-30","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2026-03-26 04:46:39","updated":"2026-09-07 07:22:30"},
+  {"key":"1ECSPBM-13710","issueType":"Feature","status":"Closed","mgmtStatus":"Yellow","summary":"PQA - ECS Contract Accuracy and Consistency between Internal Tools","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2025-12-31","rtcd":"2025-12-31","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2025-10-28 09:37:20","updated":"2026-09-02 13:32:56"},
+  {"key":"1ECSPBM-15943","issueType":"Feature","status":"Validation","mgmtStatus":"","summary":"HANA LSS Restore Handling - Azure/AWS/GCP","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-08-31","rtcd":"2026-08-31","solutionAreas":"","requestingUnit":"CAE – Technology & Architecture","receivingUnit":"CAE – Technology & Architecture","sponsor":"D062709","created":"2026-03-10 06:29:52","updated":"2026-08-31 10:52:12"},
+  {"key":"1ECSPBM-18712","issueType":"Feature","status":"Pilot","mgmtStatus":"Green","summary":"SAPIQ Template Migration to Step-Based Sizing","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-08-27","rtcd":"2026-10-19","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"D062709","created":"2026-08-31 09:17:56","updated":"2026-08-31 09:26:27"},
+  {"key":"1ECSPBM-15916","issueType":"Feature","status":"Closed","mgmtStatus":"","summary":"ICINGA Snappy agent alerting ","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-08-31","rtcd":"2026-08-31","solutionAreas":"","requestingUnit":"CAE – Technology & Architecture","receivingUnit":"CAE – Technology & Architecture","sponsor":"D062709","created":"2026-03-09 14:15:59","updated":"2026-08-17 05:57:03"},
+  {"key":"1ECSPBM-16380","issueType":"Feature","status":"Closed","mgmtStatus":"Green","summary":"Wiki Co-pilot - Enhancements","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-06-30","rtcd":"2026-06-30","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2026-04-09 05:38:42","updated":"2026-08-11 20:43:43"},
+  {"key":"1ECSPBM-15379","issueType":"Feature","status":"In Progress","mgmtStatus":"","summary":"Raven :Phase 3 - Implementation Planning","roadmapRelevance":"Yes - Internal Roadmap","pdd":"","rtcd":"","solutionAreas":"","requestingUnit":"CAE – Chief Security Office","receivingUnit":"CAE – Chief Security Office","sponsor":"I541926","created":"2026-02-04 11:41:38","updated":"2026-07-21 13:57:29"},
+  {"key":"1ECSPBM-15380","issueType":"Feature","status":"In Progress","mgmtStatus":"","summary":"Raven : Phase 4 - Build & Environment Preparation","roadmapRelevance":"Yes - Internal Roadmap","pdd":"","rtcd":"","solutionAreas":"","requestingUnit":"CAE – Chief Security Office","receivingUnit":"CAE – Chief Security Office","sponsor":"I541926","created":"2026-02-04 11:41:52","updated":"2026-07-21 13:56:36"},
+  {"key":"1ECSPBM-15381","issueType":"Feature","status":"In Progress","mgmtStatus":"","summary":"Raven : Phase 5 - Implementation & Deployment","roadmapRelevance":"Yes - Internal Roadmap","pdd":"","rtcd":"","solutionAreas":"","requestingUnit":"CAE – Chief Security Office","receivingUnit":"CAE – Chief Security Office","sponsor":"I541926","created":"2026-02-04 11:42:05","updated":"2026-07-21 13:54:53"},
+  {"key":"1ECSPBM-15382","issueType":"Feature","status":"In Progress","mgmtStatus":"","summary":"Raven : Phase 6 - Testing & Validation","roadmapRelevance":"Yes - Internal Roadmap","pdd":"","rtcd":"","solutionAreas":"","requestingUnit":"CAE – Chief Security Office","receivingUnit":"CAE – Chief Security Office","sponsor":"I541926","created":"2026-02-04 11:42:20","updated":"2026-07-21 13:54:38"},
+  {"key":"1ECSPBM-14666","issueType":"Feature","status":"Closed","mgmtStatus":"","summary":"DB2 - Backup Enablement","roadmapRelevance":"Yes - Internal Roadmap","pdd":"","rtcd":"","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Technology & Architecture","sponsor":"I825542","created":"2025-12-16 07:16:36","updated":"2026-07-15 06:32:00"},
+  {"key":"1ECSPBM-15944","issueType":"Feature","status":"Released","mgmtStatus":"","summary":"Premium Backup Enablement Snappy","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-06-30","rtcd":"2026-06-30","solutionAreas":"","requestingUnit":"CAE – Technology & Architecture","receivingUnit":"CAE – Technology & Architecture","sponsor":"D062709","created":"2026-03-10 06:39:20","updated":"2026-07-14 06:22:32"},
+  {"key":"1ECSPBM-13215","issueType":"Feature","status":"In Progress","mgmtStatus":"Yellow","summary":"AI for ECS Release Management Phase 3","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-06-30","rtcd":"2026-06-30","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2025-09-16 05:16:54","updated":"2026-07-13 05:06:00"},
+  {"key":"1ECSPBM-15555","issueType":"Feature","status":"Closed","mgmtStatus":"Green","summary":"AWS: EC2 Health / Send_to_TIC_SQS Lambda refactor","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-06-30","rtcd":"2026-06-30","solutionAreas":"","requestingUnit":"CAE – Technology & Architecture","receivingUnit":"CAE – Technology & Architecture","sponsor":"D062709","created":"2026-02-12 10:37:26","updated":"2026-06-25 12:28:29"},
+  {"key":"1ECSPBM-15272","issueType":"Feature","status":"Closed","mgmtStatus":"Green","summary":"GCP: GCFS filestore with PSC-fix the past","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-06-30","rtcd":"2026-06-30","solutionAreas":"","requestingUnit":"CAE – Technology & Architecture","receivingUnit":"CAE – Technology & Architecture","sponsor":"D062709","created":"2026-01-29 11:40:16","updated":"2026-06-22 06:13:23"},
+  {"key":"1ECSPBM-8526","issueType":"Feature","status":"Released","mgmtStatus":"Green","summary":"AI for ECS Release Management","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2025-03-31","rtcd":"2025-06-30","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"I020670","created":"2024-08-02 16:34:57","updated":"2026-06-19 10:42:48"},
+  {"key":"1ECSPBM-11350","issueType":"User Story","status":"Closed","mgmtStatus":"Green","summary":"AWS: Evaluate move to CloudWAN for Admin Networks","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-06-30","rtcd":"2026-06-30","solutionAreas":"","requestingUnit":"CAE – Technology & Architecture","receivingUnit":"CAE – Technology & Architecture","sponsor":"D062709","created":"2025-03-31 17:02:36","updated":"2026-06-19 06:12:24"},
+  {"key":"1ECSPBM-9946","issueType":"User Story","status":"Closed","mgmtStatus":"Green","summary":"AWS: Cross Hyperscaler DR","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-03-31","rtcd":"2026-03-31","solutionAreas":"","requestingUnit":"CAE – Technology & Architecture","receivingUnit":"CAE – Technology & Architecture","sponsor":"D062709","created":"2024-12-12 19:32:22","updated":"2026-06-19 05:40:37"},
+  {"key":"1ECSPBM-15546","issueType":"User Story","status":"Closed","mgmtStatus":"Green","summary":"AWS: Migrate HEC98 into CloudWAN","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-05-31","rtcd":"2026-06-30","solutionAreas":"","requestingUnit":"CAE – Technology & Architecture","receivingUnit":"CAE – Technology & Architecture","sponsor":"D062709","created":"2026-02-12 06:31:15","updated":"2026-06-19 05:31:04"},
+  {"key":"1ECSPBM-17239","issueType":"Feature","status":"Parked","mgmtStatus":"","summary":"Azure SRE agent Integration with AI Hub","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-09-30","rtcd":"2026-09-30","solutionAreas":"","requestingUnit":"CAE – Technology & Architecture","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2026-06-15 14:52:20","updated":"2026-06-15 15:00:29"},
+  {"key":"1ECSPBM-15499","issueType":"Feature","status":"New","mgmtStatus":"","summary":"Alert-Triggered Automation in Service Now","roadmapRelevance":"Yes - Internal Roadmap","pdd":"","rtcd":"","solutionAreas":"","requestingUnit":"CAE – Technology & Architecture","receivingUnit":"CAE – Technology & Architecture","sponsor":"D062709","created":"2026-02-09 14:20:14","updated":"2026-06-12 09:30:40"},
+  {"key":"1ECSPBM-9933","issueType":"Feature","status":"Closed","mgmtStatus":"","summary":"AWS: DB2 - Backup Enablement","roadmapRelevance":"Yes - External Roadmap","pdd":"2026-05-01","rtcd":"2026-05-01","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Technology & Architecture","sponsor":"I825542","created":"2024-12-12 01:19:37","updated":"2026-06-11 12:30:48"},
+  {"key":"1ECSPBM-16290","issueType":"Feature","status":"Parked","mgmtStatus":"Green","summary":"ECS DOA AI - Who approves what & KB (Q2 2026)","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-06-30","rtcd":"2026-06-30","solutionAreas":"","requestingUnit":"Portfolio Management","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2026-03-31 19:39:41","updated":"2026-06-02 14:30:39"},
+  {"key":"1ECSPBM-14991","issueType":"Feature","status":"Released","mgmtStatus":"Green","summary":"AI for ECS Release Management Phase 2 - Enhancements","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-04-30","rtcd":"2026-04-30","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"I020670","created":"2026-01-19 03:55:01","updated":"2026-05-12 09:35:10"},
+  {"key":"1ECSPBM-16610","issueType":"Feature","status":"In Preparation","mgmtStatus":"","summary":"GCP: Standardize Instance Types for CGS/CSN & CMS (New Customers)","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-06-30","rtcd":"2026-06-30","solutionAreas":"","requestingUnit":"CAE – Technology & Architecture","receivingUnit":"CAE – Technology & Architecture","sponsor":"D062709","created":"2026-04-29 12:11:08","updated":"2026-04-29 12:12:15"},
+  {"key":"1ECSPBM-15003","issueType":"Feature","status":"Parked","mgmtStatus":"Green","summary":"Google integration with AI hub","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-03-31","rtcd":"2026-03-31","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2026-01-19 08:00:20","updated":"2026-04-29 10:46:17"},
+  {"key":"1ECSPBM-13563","issueType":"Feature","status":"Parked","mgmtStatus":"Green","summary":"Create AI script for ECS Service Design Training","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-04-30","rtcd":"2026-04-30","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2025-10-14 14:19:19","updated":"2026-04-29 10:46:05"},
+  {"key":"1ECSPBM-10878","issueType":"User Story","status":"Parked","mgmtStatus":"Yellow","summary":"ECS CSR Ticket Volume Forecast (MVP) (Phase 2)","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-09-30","rtcd":"2026-09-30","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2025-02-28 09:18:58","updated":"2026-04-29 10:45:54"},
+  {"key":"1ECSPBM-14994","issueType":"Feature","status":"Closed","mgmtStatus":"Green","summary":"Intelligent ZOR Pilot: End-to-End Incident Intelligence (ZORRO) - MVP","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-03-31","rtcd":"2026-03-31","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2026-01-19 06:17:36","updated":"2026-04-27 12:54:59"},
+  {"key":"1ECSPBM-15513","issueType":"User Story","status":"Closed","mgmtStatus":"","summary":"AWS: Remove Overlapping ASN CHINA TGW","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-05-29","rtcd":"2026-05-29","solutionAreas":"","requestingUnit":"CAE – Technology & Architecture","receivingUnit":"CAE – Technology & Architecture","sponsor":"D062709","created":"2026-02-10 12:08:28","updated":"2026-04-27 08:38:06"},
+  {"key":"1ECSPBM-13466","issueType":"Feature","status":"Released","mgmtStatus":"Yellow","summary":"ECS DOA AI - Who approves what & KB (Phase 3)","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-03-31","rtcd":"2026-03-31","solutionAreas":"","requestingUnit":"Portfolio Management","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2025-10-06 17:48:56","updated":"2026-04-13 13:30:39"},
+  {"key":"1ECSPBM-14915","issueType":"Feature","status":"Released","mgmtStatus":"Green","summary":"GCO Agentic AI Hub - Q1 Enhancements","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-03-31","rtcd":"2026-03-31","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2026-01-13 10:01:38","updated":"2026-04-10 06:29:18"},
+  {"key":"1ECSPBM-14717","issueType":"Feature","status":"Pilot","mgmtStatus":"Green","summary":"Database Storage Template Solution Redesign GitHub Implementation (MVP) Phase 1","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-03-27","rtcd":"","solutionAreas":"","requestingUnit":"CAE – Technology & Architecture","receivingUnit":"CAE – Technology & Architecture","sponsor":"I825542","created":"2025-12-18 14:41:57","updated":"2026-04-08 08:48:18"},
+  {"key":"1ECSPBM-15188","issueType":"Feature","status":"Closed","mgmtStatus":"Green","summary":"RH: QA, Testing & Validation","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-03-31","rtcd":"","solutionAreas":"","requestingUnit":"CAE – Technology & Architecture","receivingUnit":"CAE – Technology & Architecture","sponsor":"I825542","created":"2026-01-25 06:55:22","updated":"2026-03-31 15:27:13"},
+  {"key":"1ECSPBM-15189","issueType":"Feature","status":"Closed","mgmtStatus":"Green","summary":"RH: Rollout & Operational Readiness","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-03-31","rtcd":"","solutionAreas":"","requestingUnit":"CAE – Technology & Architecture","receivingUnit":"CAE – Technology & Architecture","sponsor":"I825542","created":"2026-01-25 06:57:12","updated":"2026-03-31 15:26:51"},
+  {"key":"1ECSPBM-15187","issueType":"Feature","status":"Closed","mgmtStatus":"Green","summary":"RH: Integration & System Connectivity","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-03-31","rtcd":"","solutionAreas":"","requestingUnit":"CAE – Technology & Architecture","receivingUnit":"CAE – Technology & Architecture","sponsor":"I825542","created":"2026-01-25 06:53:03","updated":"2026-03-31 15:26:11"},
+  {"key":"1ECSPBM-15186","issueType":"Feature","status":"Closed","mgmtStatus":"Green","summary":"RH: Automation Development & Pilot Implementation","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-03-31","rtcd":"","solutionAreas":"","requestingUnit":"CAE – Technology & Architecture","receivingUnit":"CAE – Technology & Architecture","sponsor":"I825542","created":"2026-01-25 06:49:34","updated":"2026-03-31 15:25:38"},
+  {"key":"1ECSPBM-15185","issueType":"Feature","status":"Closed","mgmtStatus":"Green","summary":"RH: Discovery & Foundational Design","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-03-31","rtcd":"","solutionAreas":"","requestingUnit":"CAE – Technology & Architecture","receivingUnit":"CAE – Technology & Architecture","sponsor":"I825542","created":"2026-01-25 06:38:22","updated":"2026-03-31 15:20:07"},
+  {"key":"1ECSPBM-14207","issueType":"Feature","status":"Closed","mgmtStatus":"Green","summary":"High Availability and Backups for AI components - Neo4j Knowledge graph","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-03-31","rtcd":"2026-03-31","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2025-11-24 10:35:53","updated":"2026-03-31 08:02:01"},
+  {"key":"1ECSPBM-14206","issueType":"Feature","status":"Closed","mgmtStatus":"Green","summary":"High Availability and Backups for AI components - Database","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-03-16","rtcd":"2026-03-31","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2025-11-24 10:33:23","updated":"2026-03-31 06:07:23"},
+  {"key":"1ECSPBM-10337","issueType":"Feature","status":"Pilot","mgmtStatus":"Yellow","summary":"Smart Deal and Invoice Assistant","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-03-31","rtcd":"2026-03-31","solutionAreas":"","requestingUnit":"ECS – COO","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2025-01-24 09:27:11","updated":"2026-03-30 15:29:16"},
+  {"key":"1ECSPBM-13704","issueType":"Feature","status":"Closed","mgmtStatus":"Green","summary":"AWS: EC2 Lambda should change CapacityReservation of None to Open even for high memory","roadmapRelevance":"Yes - Internal Roadmap","pdd":"","rtcd":"","solutionAreas":"","requestingUnit":"CAE – Technology & Architecture","receivingUnit":"CAE – Technology & Architecture","sponsor":"D062709","created":"2025-10-27 07:59:29","updated":"2026-03-30 10:37:17"},
+  {"key":"1ECSPBM-14962","issueType":"User Story","status":"Closed","mgmtStatus":"Green","summary":"AWS: Contribute AWS related sections to Golden Standards","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-03-30","rtcd":"2026-06-30","solutionAreas":"","requestingUnit":"CAE – Technology & Architecture","receivingUnit":"CAE – Technology & Architecture","sponsor":"D062709","created":"2026-01-15 11:05:53","updated":"2026-03-30 08:05:03"},
+  {"key":"1ECSPBM-6526","issueType":"Feature","status":"Closed","mgmtStatus":"Green","summary":"Unicorn 2.0 - Project E2E Encryption","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2024-10-07","rtcd":"2024-11-04","solutionAreas":"","requestingUnit":"CAE – Chief Security Office","receivingUnit":"CAE – Technology & Architecture","sponsor":"D062709","created":"2024-02-07 13:05:15","updated":"2026-03-26 14:35:51"},
+  {"key":"1ECSPBM-14468","issueType":"Feature","status":"Parked","mgmtStatus":"Green","summary":"DED and PQA - ECS Contract Accuracy and Consistency between Internal Tools(Phase1)","roadmapRelevance":"Yes - Internal Roadmap","pdd":"","rtcd":"","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2025-12-02 04:31:24","updated":"2026-03-26 05:49:38"},
+  {"key":"1ECSPBM-13569","issueType":"Feature","status":"Closed","mgmtStatus":"","summary":"Tines Integration with CrowdStrike - Detections","roadmapRelevance":"Yes - Internal Roadmap","pdd":"","rtcd":"","solutionAreas":"","requestingUnit":"CAE – Chief Security Office","receivingUnit":"CAE – Chief Security Office","sponsor":"I541926","created":"2025-10-15 07:57:00","updated":"2026-03-18 16:16:52"},
+  {"key":"1ECSPBM-13570","issueType":"Feature","status":"Closed","mgmtStatus":"","summary":"Tines Integration with Anvilogic","roadmapRelevance":"Yes - Internal Roadmap","pdd":"","rtcd":"","solutionAreas":"","requestingUnit":"CAE – Chief Security Office","receivingUnit":"CAE – Chief Security Office","sponsor":"I541926","created":"2025-10-15 07:57:20","updated":"2026-03-18 16:16:31"},
+  {"key":"1ECSPBM-12315","issueType":"Feature","status":"Closed","mgmtStatus":"","summary":"CyberArk SIA solution enablement on HEC2.0 CGS/CMS and HEC 3.0 CGS/CSN","roadmapRelevance":"Yes - Internal Roadmap","pdd":"","rtcd":"","solutionAreas":"","requestingUnit":"DEL – TechOps – Server Management","receivingUnit":"CAE – Technology & Architecture","sponsor":"D073315","created":"2025-07-02 05:37:32","updated":"2026-03-18 14:20:58"},
+  {"key":"1ECSPBM-15378","issueType":"Feature","status":"Closed","mgmtStatus":"","summary":"Raven : Phase 2 - Solution Design","roadmapRelevance":"Yes - Internal Roadmap","pdd":"","rtcd":"","solutionAreas":"","requestingUnit":"CAE – Chief Security Office","receivingUnit":"CAE – Chief Security Office","sponsor":"I541926","created":"2026-02-04 11:41:26","updated":"2026-03-18 12:08:18"},
+  {"key":"1ECSPBM-15377","issueType":"Feature","status":"Closed","mgmtStatus":"","summary":"Raven : Phase 1 - Initiation & Requirements","roadmapRelevance":"Yes - Internal Roadmap","pdd":"","rtcd":"","solutionAreas":"","requestingUnit":"CAE – Chief Security Office","receivingUnit":"CAE – Chief Security Office","sponsor":"I541926","created":"2026-02-04 11:40:21","updated":"2026-03-18 12:08:00"},
+  {"key":"1ECSPBM-13351","issueType":"User Story","status":"Closed","mgmtStatus":"Green","summary":"Add Regional filestore tier into monitoring and auto expansion","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-03-31","rtcd":"2026-03-31","solutionAreas":"","requestingUnit":"CAE – Technology & Architecture","receivingUnit":"CAE – Technology & Architecture","sponsor":"D062709","created":"2025-09-25 07:19:42","updated":"2026-03-17 07:21:21"},
+  {"key":"1ECSPBM-15947","issueType":"Feature","status":"Parked","mgmtStatus":"","summary":"Long Term Retention Backup migration from DDvE to Snappy","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2027-06-30","rtcd":"2027-06-30","solutionAreas":"","requestingUnit":"CAE – Technology & Architecture","receivingUnit":"CAE – Technology & Architecture","sponsor":"D062709","created":"2026-03-10 08:36:44","updated":"2026-03-13 06:37:42"},
+  {"key":"1ECSPBM-10347","issueType":"Feature","status":"Parked","mgmtStatus":"Green","summary":"ECS RISE Functionality Q&A","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-09-30","rtcd":"2026-09-30","solutionAreas":"","requestingUnit":"CDE","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2025-01-24 17:19:42","updated":"2026-03-10 11:24:54"},
+  {"key":"1ECSPBM-10348","issueType":"Feature","status":"Parked","mgmtStatus":"Green","summary":"ECS System Decommissioning, Storage, System builds, Uplifts,Downlifts Extension Alerts","roadmapRelevance":"Yes - Internal Roadmap","pdd":"","rtcd":"","solutionAreas":"","requestingUnit":"CDE","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2025-01-24 17:24:22","updated":"2026-03-10 11:24:29"},
+  {"key":"1ECSPBM-14683","issueType":"Feature","status":"Parked","mgmtStatus":"Green","summary":"Evaluate interface to Signavio from LLM","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-09-30","rtcd":"2026-09-30","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2025-12-17 07:26:38","updated":"2026-03-10 11:23:00"},
+  {"key":"1ECSPBM-10967","issueType":"Feature","status":"Parked","mgmtStatus":"Green","summary":"Predictive Sizing and Landscape Recommender","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-06-30","rtcd":"2026-06-30","solutionAreas":"","requestingUnit":"CAE – Cloud Architect and Advisory","receivingUnit":"CAE – Data Management","sponsor":"D048967","created":"2025-03-06 10:41:16","updated":"2026-03-10 11:21:26"},
+  {"key":"1ECSPBM-15255","issueType":"Feature","status":"Closed","mgmtStatus":"Green","summary":"AWS: EC2 Lambda should automatically set logging on ALB and WAF","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-03-31","rtcd":"2026-03-31","solutionAreas":"","requestingUnit":"CAE – Technology & Architecture","receivingUnit":"CAE – Technology & Architecture","sponsor":"D062709","created":"2026-01-28 18:40:34","updated":"2026-02-27 17:58:24"},
+  {"key":"1ECSPBM-13802","issueType":"Feature","status":"Closed","mgmtStatus":"Green","summary":"AWS: EC2 Lambda should change DLM automated tagging for Infra VMs","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-03-31","rtcd":"2026-03-31","solutionAreas":"","requestingUnit":"CAE – Technology & Architecture","receivingUnit":"CAE – Technology & Architecture","sponsor":"D062709","created":"2025-11-05 09:48:58","updated":"2026-02-27 17:58:17"},
+  {"key":"1ECSPBM-14870","issueType":"User Story","status":"Closed","mgmtStatus":"Green","summary":"GCP: GCP VPC Service Controls support after implementation for the violations","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-03-31","rtcd":"2026-03-31","solutionAreas":"","requestingUnit":"CAE – Technology & Architecture","receivingUnit":"CAE – Technology & Architecture","sponsor":"D062709","created":"2026-01-12 05:15:57","updated":"2026-02-24 08:54:09"},
+  {"key":"1ECSPBM-13269","issueType":"Feature","status":"Closed","mgmtStatus":"Green","summary":"AWS: Capacity Reservations for Elastic Disaster Recovery(DRS)","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-02-27","rtcd":"2026-01-31","solutionAreas":"","requestingUnit":"CAE – Technology & Architecture","receivingUnit":"CAE – Technology & Architecture","sponsor":"D062709","created":"2025-09-17 11:54:26","updated":"2026-02-23 11:19:44"},
+  {"key":"1ECSPBM-11004","issueType":"User Story","status":"Closed","mgmtStatus":"Green","summary":"AWS: AirGap Feature for Backups","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-02-28","rtcd":"2026-03-31","solutionAreas":"","requestingUnit":"CAE – Technology & Architecture","receivingUnit":"CAE – Technology & Architecture","sponsor":"D062709","created":"2025-03-07 09:04:56","updated":"2026-02-20 17:27:20"},
+  {"key":"1ECSPBM-15646","issueType":"Feature","status":"New","mgmtStatus":"","summary":"GCP : CMEK FS enablement","roadmapRelevance":"Yes - Internal Roadmap","pdd":"","rtcd":"","solutionAreas":"","requestingUnit":"CAE – Chief Security Office","receivingUnit":"CAE – Technology & Architecture","sponsor":"I541926","created":"2026-02-19 12:21:26","updated":"2026-02-19 12:25:50"},
+  {"key":"1ECSPBM-15505","issueType":"Feature","status":"New","mgmtStatus":"","summary":"KB Process Enablement","roadmapRelevance":"Yes - Internal Roadmap","pdd":"","rtcd":"","solutionAreas":"","requestingUnit":"CAE – Technology & Architecture","receivingUnit":"CAE – Technology & Architecture","sponsor":"D062709","created":"2026-02-10 05:33:14","updated":"2026-02-10 06:23:34"},
+  {"key":"1ECSPBM-15500","issueType":"Feature","status":"New","mgmtStatus":"","summary":"Alert Onboarding process","roadmapRelevance":"Yes - Internal Roadmap","pdd":"","rtcd":"","solutionAreas":"","requestingUnit":"CAE – Technology & Architecture","receivingUnit":"CAE – Technology & Architecture","sponsor":"D062709","created":"2026-02-09 14:30:35","updated":"2026-02-10 06:14:36"},
+  {"key":"1ECSPBM-15507","issueType":"Feature","status":"New","mgmtStatus":"","summary":"Continuous Improvement","roadmapRelevance":"Yes - Internal Roadmap","pdd":"","rtcd":"","solutionAreas":"","requestingUnit":"CAE – Technology & Architecture","receivingUnit":"CAE – Technology & Architecture","sponsor":"D062709","created":"2026-02-10 06:08:54","updated":"2026-02-10 06:08:55"},
+  {"key":"1ECSPBM-15297","issueType":"Feature","status":"Parked","mgmtStatus":"","summary":"Automating SAP Landscape Configuration - Placeholder","roadmapRelevance":"Yes - Internal Roadmap","pdd":"","rtcd":"","solutionAreas":"","requestingUnit":"CAE – Technology & Architecture","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2026-01-30 05:45:32","updated":"2026-01-30 05:45:49"},
+  {"key":"1ECSPBM-13334","issueType":"User Story","status":"Closed","mgmtStatus":"Green","summary":"AWS: R8i Enablement","roadmapRelevance":"Yes - External Roadmap","pdd":"2026-02-27","rtcd":"2026-02-27","solutionAreas":"","requestingUnit":"CAE – Chief Security Office","receivingUnit":"CAE – Technology & Architecture","sponsor":"D062709","created":"2025-09-23 22:46:17","updated":"2026-01-26 09:15:07"},
+  {"key":"1ECSPBM-14084","issueType":"Feature","status":"Closed","mgmtStatus":"Green","summary":"High Availability and Backups for AI components - Applications","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2026-03-31","rtcd":"2026-03-31","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2025-11-19 05:34:03","updated":"2026-01-20 06:29:05"},
+  {"key":"1ECSPBM-12866","issueType":"Feature","status":"Released","mgmtStatus":"Green","summary":"AI Powered Wiki Content generation - ARP","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2025-12-31","rtcd":"2025-12-31","solutionAreas":"","requestingUnit":"DEL – TechOps – Incident Management","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2025-08-19 03:37:03","updated":"2026-01-16 17:34:21"},
+  {"key":"1ECSPBM-11363","issueType":"Feature","status":"Closed","mgmtStatus":"Green","summary":"GCP: Enable NFS 4.1","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2025-11-28","rtcd":"2025-11-28","solutionAreas":"","requestingUnit":"CAE – Technology & Architecture","receivingUnit":"CAE – Technology & Architecture","sponsor":"D062709","created":"2025-04-01 13:59:00","updated":"2026-01-07 08:38:42"},
+  {"key":"1ECSPBM-11309","issueType":"Feature","status":"Released","mgmtStatus":"Yellow","summary":"ECS DOA AI - Who approves what (Phase 2)","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2025-09-30","rtcd":"2025-09-30","solutionAreas":"","requestingUnit":"Portfolio Management","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2025-03-26 18:02:44","updated":"2025-12-24 04:59:56"},
+  {"key":"1ECSPBM-11989","issueType":"Feature","status":"Released","mgmtStatus":"Green","summary":"AI for ECS Release Management Phase 2","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2025-10-30","rtcd":"2025-10-30","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"I020670","created":"2025-06-03 03:56:49","updated":"2025-12-24 04:59:27"},
+  {"key":"1ECSPBM-11916","issueType":"Feature","status":"Released","mgmtStatus":"Green","summary":"AI for ECS Release Management Phase 1","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2025-06-30","rtcd":"2025-06-30","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"I020670","created":"2025-05-27 02:47:38","updated":"2025-12-24 04:58:51"},
+  {"key":"1ECSPBM-10772","issueType":"Feature","status":"Released","mgmtStatus":"Green","summary":"Wiki Content Generation with AI support – Find & Fix​","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2025-04-25","rtcd":"2025-04-25","solutionAreas":"","requestingUnit":"DEL – TechOps – Incident Management","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2025-02-19 16:26:25","updated":"2025-12-22 22:23:45"},
+  {"key":"1ECSPBM-13492","issueType":"Feature","status":"Released","mgmtStatus":"Green","summary":"Migration of AI hub applications using SSO","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2025-12-31","rtcd":"2025-12-31","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2025-10-08 04:46:17","updated":"2025-12-19 10:49:48"},
+  {"key":"1ECSPBM-13274","issueType":"Feature","status":"Released","mgmtStatus":"Green","summary":"ECS JIRA Co-Pilot - Integrate DBOPS and ECSTSMKH Jira channels","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2025-12-31","rtcd":"2025-12-31","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2025-09-18 03:53:26","updated":"2025-12-19 10:47:36"},
+  {"key":"1ECSPBM-12744","issueType":"Feature","status":"Closed","mgmtStatus":"Green","summary":"ECS Contract Management – Deviation Reporting (Release v2.0)","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2025-12-31","rtcd":"2025-12-31","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2025-08-05 14:38:40","updated":"2025-12-19 10:43:32"},
+  {"key":"1ECSPBM-13927","issueType":"Feature","status":"Released","mgmtStatus":"Yellow","summary":"DED - (MVP)ECS Contract Accuracy and Consistency between Internal Tools","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2025-12-31","rtcd":"2025-12-31","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2025-11-12 03:44:37","updated":"2025-12-11 14:07:21"},
+  {"key":"1ECSPBM-13028","issueType":"Feature","status":"Closed","mgmtStatus":"","summary":"GCP: Review existing GCP reservations process","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2025-11-28","rtcd":"2025-11-28","solutionAreas":"","requestingUnit":"CAE – Technology & Architecture","receivingUnit":"CAE – Technology & Architecture","sponsor":"D062709","created":"2025-09-01 09:50:19","updated":"2025-12-09 07:25:01"},
+  {"key":"1ECSPBM-13777","issueType":"User Story","status":"Closed","mgmtStatus":"Green","summary":"AWS: metis_golden_standards - Security Review","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2025-12-04","rtcd":"2025-12-31","solutionAreas":"","requestingUnit":"CAE – Chief Security Office","receivingUnit":"CAE – Technology & Architecture","sponsor":"D062709","created":"2025-11-04 07:14:24","updated":"2025-12-08 11:22:03"},
+  {"key":"1ECSPBM-13779","issueType":"User Story","status":"Closed","mgmtStatus":"Green","summary":"AWS Well-Architected Framework Review – Security Pillar","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2025-10-05","rtcd":"2025-11-30","solutionAreas":"","requestingUnit":"CAE – Chief Security Office","receivingUnit":"CAE – Technology & Architecture","sponsor":"D062709","created":"2025-11-04 07:42:05","updated":"2025-11-20 11:38:22"},
+  {"key":"1ECSPBM-13940","issueType":"Feature","status":"Parked","mgmtStatus":"","summary":"AIOPS-AI-Driven Customer Landscape Compliance & Optimization Chatbot","roadmapRelevance":"Yes - Internal Roadmap","pdd":"","rtcd":"","solutionAreas":"","requestingUnit":"CAE – Technology & Architecture","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2025-11-12 12:14:11","updated":"2025-11-17 09:54:47"},
+  {"key":"1ECSPBM-13939","issueType":"Feature","status":"Parked","mgmtStatus":"","summary":"AIOPS-Azure Infrastructure Configuration Drift Identification and Remediation","roadmapRelevance":"Yes - Internal Roadmap","pdd":"","rtcd":"","solutionAreas":"","requestingUnit":"CAE – Technology & Architecture","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2025-11-12 12:13:06","updated":"2025-11-17 09:54:25"},
+  {"key":"1ECSPBM-13694","issueType":"Feature","status":"Closed","mgmtStatus":"","summary":"AWS: Auckland Region Launch ","roadmapRelevance":"Yes - Internal Roadmap","pdd":"","rtcd":"","solutionAreas":"","requestingUnit":"CAE – Technology & Architecture","receivingUnit":"CAE – Technology & Architecture","sponsor":"D062709","created":"2025-10-26 15:23:53","updated":"2025-10-29 10:08:53"},
+  {"key":"1ECSPBM-13696","issueType":"Feature","status":"New","mgmtStatus":"","summary":"FSX ONTAP for SAP HANA","roadmapRelevance":"Yes - Internal Roadmap","pdd":"","rtcd":"","solutionAreas":"","requestingUnit":"CAE – Technology & Architecture","receivingUnit":"CAE – Technology & Architecture","sponsor":"D062709","created":"2025-10-26 15:48:21","updated":"2025-10-27 16:08:06"},
+  {"key":"1ECSPBM-9568","issueType":"User Story","status":"Released","mgmtStatus":"Green","summary":"ECS JIRA Copilot - Initial Release/Foundation","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2025-03-31","rtcd":"2025-03-31","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2024-11-13 20:57:44","updated":"2025-10-14 08:49:30"},
+  {"key":"1ECSPBM-7833","issueType":"Feature","status":"Released","mgmtStatus":"Yellow","summary":"ECS Contract Management – Client and Supplier Order Form Comparison (1st Release)","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2025-03-31","rtcd":"2025-06-30","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2024-05-17 17:34:50","updated":"2025-08-25 07:54:50"},
+  {"key":"1ECSPBM-7212","issueType":"Feature","status":"Closed","mgmtStatus":"Green","summary":"ECS Wiki Copilot - Initial Release/Foundation","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2024-05-31","rtcd":"2024-06-30","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2023-11-07 04:01:36","updated":"2025-08-25 07:51:12"},
+  {"key":"1ECSPBM-7832","issueType":"Feature","status":"Closed","mgmtStatus":"Yellow","summary":"ECS Contract Management – Deviation Reporting (Release v1.0)","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2025-07-31","rtcd":"2025-07-31","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2024-05-17 17:31:00","updated":"2025-08-25 07:41:13"},
+  {"key":"1ECSPBM-7890","issueType":"Feature","status":"Closed","mgmtStatus":"Yellow","summary":"ECS R&R Inquiry","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2025-05-16","rtcd":"2025-06-30","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2024-05-26 19:28:25","updated":"2025-08-25 07:35:45"},
+  {"key":"1ECSPBM-8013","issueType":"Feature","status":"Closed","mgmtStatus":"Yellow","summary":"ECS Wiki Copilot - Lifecycle Management - Phase 1","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2024-12-31","rtcd":"2024-12-31","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2024-06-10 21:34:59","updated":"2025-08-25 07:35:07"},
+  {"key":"1ECSPBM-4487","issueType":"Feature","status":"Rejected","mgmtStatus":"Green","summary":"Support for Multiple ASE instances in a VM","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2023-12-31","rtcd":"2024-03-31","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2023-07-13 16:54:52","updated":"2025-06-17 14:46:36"},
+  {"key":"1ECSPBM-10884","issueType":"User Story","status":"Released","mgmtStatus":"","summary":"Hyperscalers' Filesystem POC","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2025-06-15","rtcd":"2025-06-30","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2025-02-28 10:06:20","updated":"2025-04-15 12:43:24"},
+  {"key":"1ECSPBM-10427","issueType":"Feature","status":"Pilot","mgmtStatus":"Green","summary":"ECS DOA AI - Who approves what (MVP -SLA)","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2025-03-31","rtcd":"2025-04-15","solutionAreas":"","requestingUnit":"Portfolio Management","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2025-01-30 16:49:18","updated":"2025-03-31 14:06:42"},
+  {"key":"1ECSPBM-6484","issueType":"Feature","status":"Rejected","mgmtStatus":"","summary":"DVO- service refinement:  add deployment and activation for one object to the standard DVO package (DLM Quick Win)","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2024-06-28","rtcd":"2024-09-27","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2023-11-13 17:51:16","updated":"2024-11-05 22:24:29"},
+  {"key":"1ECSPBM-8887","issueType":"User Story","status":"Rejected","mgmtStatus":"Green","summary":"Mapping CSR ticket with Subcontractor/Partner","roadmapRelevance":"Yes - Internal Roadmap","pdd":"","rtcd":"","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"I020670","created":"2024-09-03 17:57:52","updated":"2024-09-18 16:26:39"},
+  {"key":"1ECSPBM-7895","issueType":"User Story","status":"Rejected","mgmtStatus":"Green","summary":"CAS for Data Growth Management (SKU: tbd.) v.02-2025 planned","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2025-01-01","rtcd":"2025-01-01","solutionAreas":"","requestingUnit":"CAE – Data Management","receivingUnit":"CAE – Data Management","sponsor":"I533181","created":"2024-05-27 08:09:44","updated":"2024-08-02 10:40:31"},
+  {"key":"1ECSPBM-1533","issueType":"Feature","status":"Rejected","mgmtStatus":"","summary":"[ENABLE] Embed AI in Early Watch Alert Dashboard","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2024-05-18","rtcd":"","solutionAreas":"","requestingUnit":"ECS – COO","receivingUnit":"CAE – Data Management","sponsor":"I825542","created":"2022-08-14 17:25:17","updated":"2024-04-14 22:47:29"},
+  {"key":"1ECSPBM-3383","issueType":"Feature","status":"Released","mgmtStatus":"Green","summary":"[CONCEPT] ECS Renewal Prediction","roadmapRelevance":"Yes - Internal Roadmap","pdd":"2023-07-31","rtcd":"2023-07-31","solutionAreas":"","requestingUnit":"ECS – COO","receivingUnit":"CAE – Data Management","sponsor":"I807320","created":"2023-02-07 14:04:55","updated":"2024-04-08 10:49:19"}
+];
+window.lastUpdated = '2026-10-26 14:10:00';
+
+</script>
+<script>
+// ── Daten & State ─────────────────────────────────────────────────────────────
+const JIRA_BASE = 'https://jira.tools.sap';
+let allData      = [];
+let filteredData = [];
+let sortCol      = 'updated';
+let sortDir      = 'desc';
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  if (typeof window.jiraData !== 'undefined') {
+    allData = window.jiraData;
+    init();
+  } else {
+    document.getElementById('table-footer').textContent =
+      'No data loaded. Please click Refresh or run fetch_data.py.';
+    document.getElementById('empty-state').style.display = 'block';
+    document.querySelector('#issues-table tbody').style.display = 'none';
+  }
+  if (typeof window.lastUpdated !== 'undefined') {
+    document.getElementById('last-updated-label').textContent =
+      'Last updated: ' + window.lastUpdated;
+  }
+});
+
+function init() {
+  populateDropdowns();
+  bindEvents();
+  applyFilters();
+}
+
+// ── Dropdowns befüllen ────────────────────────────────────────────────────────
+function populateDropdowns() {
+  const unique = (key) => [...new Set(
+    allData.map(d => d[key]).filter(v => v && v.trim())
+  )].sort();
+
+  fillSelect('f-status',     unique('status'));
+  fillSelect('f-mgmt',       unique('mgmtStatus'));
+  fillSelect('f-requesting', unique('requestingUnit'));
+  fillSelect('f-receiving',  unique('receivingUnit'));
+}
+
+function fillSelect(id, values) {
+  const sel = document.getElementById(id);
+  values.forEach(v => {
+    const opt = document.createElement('option');
+    opt.value = v;
+    opt.textContent = v;
+    sel.appendChild(opt);
+  });
+}
+
+// ── Events ────────────────────────────────────────────────────────────────────
+function bindEvents() {
+  ['f-search','f-status','f-roadmap','f-mgmt','f-requesting','f-receiving']
+    .forEach(id => document.getElementById(id).addEventListener('input', applyFilters));
+
+  document.getElementById('btn-reset').addEventListener('click', resetFilters);
+  document.getElementById('btn-refresh').addEventListener('click', doRefresh);
+  document.getElementById('btn-export').addEventListener('click', doExport);
+
+  document.querySelectorAll('thead th[data-col]').forEach(th => {
+    th.addEventListener('click', () => {
+      const col = th.dataset.col;
+      if (sortCol === col) {
+        sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+      } else {
+        sortCol = col;
+        sortDir = 'asc';
+      }
+      applyFilters();
+    });
+  });
+}
+
+function resetFilters() {
+  document.getElementById('f-search').value    = '';
+  document.getElementById('f-status').value    = '';
+  document.getElementById('f-roadmap').value   = '';
+  document.getElementById('f-mgmt').value      = '';
+  document.getElementById('f-requesting').value = '';
+  document.getElementById('f-receiving').value  = '';
+  applyFilters();
+}
+
+// ── Filtern & Sortieren ───────────────────────────────────────────────────────
+function applyFilters() {
+  const search    = document.getElementById('f-search').value.toLowerCase().trim();
+  const status    = document.getElementById('f-status').value;
+  const roadmap   = document.getElementById('f-roadmap').value;
+  const mgmt      = document.getElementById('f-mgmt').value;
+  const requesting = document.getElementById('f-requesting').value;
+  const receiving  = document.getElementById('f-receiving').value;
+
+  filteredData = allData.filter(d => {
+    if (search && !d.key.toLowerCase().includes(search) && !d.summary.toLowerCase().includes(search))
+      return false;
+    if (status    && d.status          !== status)    return false;
+    if (roadmap   && d.roadmapRelevance !== roadmap)  return false;
+    if (mgmt      && d.mgmtStatus       !== mgmt)     return false;
+    if (requesting && d.requestingUnit  !== requesting) return false;
+    if (receiving  && d.receivingUnit   !== receiving)  return false;
+    return true;
+  });
+
+  // Sortieren
+  filteredData.sort((a, b) => {
+    const va = (a[sortCol] || '').toString().toLowerCase();
+    const vb = (b[sortCol] || '').toString().toLowerCase();
+    if (va < vb) return sortDir === 'asc' ? -1 : 1;
+    if (va > vb) return sortDir === 'asc' ?  1 : -1;
+    return 0;
+  });
+
+  renderTable();
+  updateSortIndicators();
+  updateBadge();
+}
+
+// ── Tabelle rendern ───────────────────────────────────────────────────────────
+function cell(val, cls) {
+  const v = (val || '').toString().trim();
+  if (!v) return `<td class="cell-empty ${cls || ''}">–</td>`;
+  return `<td class="${cls || ''}">${esc(v)}</td>`;
+}
+
+function shortDate(val) {
+  const v = (val || '').toString().trim();
+  if (!v) return '<td class="cell-empty cell-date">–</td>';
+  return `<td class="cell-date">${esc(v.substring(0, 10))}</td>`;
+}
+
+function esc(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function roadmapPill(v) {
+  if (!v) return '<td class="cell-empty">–</td>';
+  const cls = v.includes('External') ? 'pill-external' : 'pill-internal';
+  const lbl = v.includes('External') ? 'External' : 'Internal';
+  return `<td><span class="pill ${cls}">${lbl}</span></td>`;
+}
+
+function renderTable() {
+  const tbody  = document.getElementById('table-body');
+  const empty  = document.getElementById('empty-state');
+  const footer = document.getElementById('table-footer');
+
+  if (filteredData.length === 0) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+    footer.textContent  = '0 Issues';
+    return;
+  }
+
+  empty.style.display = 'none';
+  tbody.innerHTML = filteredData.map(d => `
+    <tr>
+      <td class="cell-key"><a href="${JIRA_BASE}/browse/${esc(d.key)}" target="_blank">${esc(d.key)}</a></td>
+      ${cell(d.issueType)}
+      ${cell(d.status)}
+      ${cell(d.mgmtStatus)}
+      <td class="cell-summary">${esc(d.summary || '')}</td>
+      ${roadmapPill(d.roadmapRelevance)}
+      ${shortDate(d.pdd)}
+      ${shortDate(d.rtcd)}
+      ${cell(d.receivingUnit)}
+      ${cell(d.sponsor)}
+      ${shortDate(d.created)}
+      ${shortDate(d.updated)}
+    </tr>
+  `).join('');
+
+  footer.textContent = `${filteredData.length} Issue${filteredData.length !== 1 ? 's' : ''} (of ${allData.length} total)`;
+}
+
+function updateSortIndicators() {
+  document.querySelectorAll('thead th').forEach(th => {
+    th.classList.remove('sort-asc', 'sort-desc');
+    if (th.dataset.col === sortCol) {
+      th.classList.add(sortDir === 'asc' ? 'sort-asc' : 'sort-desc');
+    }
+  });
+}
+
+function updateBadge() {
+  document.getElementById('header-badge').textContent =
+    `${filteredData.length} / ${allData.length} Issues`;
+}
+
+// ── Refresh ───────────────────────────────────────────────────────────────────
+function doRefresh() {
+  const overlay = document.getElementById('loading-overlay');
+  const status  = document.getElementById('refresh-status');
+  const btn     = document.getElementById('btn-refresh');
+
+  overlay.classList.add('visible');
+  btn.disabled = true;
+  status.className = 'loading';
+  status.textContent = 'Loading …';
+
+  fetch('/refresh', { method: 'POST' })
+    .then(r => r.json())
+    .then(data => {
+      overlay.classList.remove('visible');
+      btn.disabled = false;
+      if (data.status === 'ok') {
+        status.className = 'ok';
+        status.textContent = '✓ Updated';
+        setTimeout(() => location.reload(), 800);
+      } else {
+        status.className = 'error';
+        const msg = (data.output || 'Unknown error');
+        status.textContent = '✗ ' + msg.substring(0, 120);
+        if (msg.includes('Claude Code') || msg.includes('401') || msg.includes('403')) {
+          setTimeout(() => alert('Jira Refresh Notice:\n\n' + msg + '\n\nTo refresh, type in Claude Code:\n"Update the Jira data for the 1ECSPBM Dashboard"'), 100);
+        }
+      }
+    })
+    .catch(err => {
+      overlay.classList.remove('visible');
+      btn.disabled = false;
+      status.className = 'error';
+      status.textContent = '✗ Server not reachable. Please run start.bat.';
+    });
+}
+
+// ── CSV Export ────────────────────────────────────────────────────────────────
+function doExport() {
+  const now = new Date();
+  const pad = n => String(n).padStart(2, '0');
+  const ts  = `${now.getFullYear()}${pad(now.getMonth()+1)}${pad(now.getDate())}_` +
+               `${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+  const filename = `1ECSPBM_items_wo_SolutionArea_${ts}.csv`;
+
+  const cols = [
+    { key: 'key',             label: 'Key' },
+    { key: 'issueType',       label: 'Issue Type' },
+    { key: 'status',          label: 'Status' },
+    { key: 'mgmtStatus',      label: 'Mgmt Status' },
+    { key: 'summary',         label: 'Summary' },
+    { key: 'roadmapRelevance',label: 'Roadmap Relevance' },
+    { key: 'pdd',             label: 'PDD' },
+    { key: 'rtcd',            label: 'RTCD' },
+    { key: 'solutionAreas',   label: 'Solution Area/s' },
+    { key: 'receivingUnit',   label: 'Receiving Unit' },
+    { key: 'sponsor',         label: 'Sponsor' },
+    { key: 'created',         label: 'Created' },
+    { key: 'updated',         label: 'Updated' },
+  ];
+
+  const csvEsc = v => {
+    const s = (v || '').toString();
+    if (s.includes(';') || s.includes('"') || s.includes('\n')) {
+      return '"' + s.replace(/"/g, '""') + '"';
+    }
+    return s;
+  };
+
+  const header = cols.map(c => c.label).join(';');
+  const rows   = filteredData.map(d =>
+    cols.map(c => csvEsc(d[c.key])).join(';')
+  );
+
+  // UTF-8 BOM für Excel-Kompatibilität
+  const bom     = '﻿';
+  const content = bom + [header, ...rows].join('\r\n');
+  const blob    = new Blob([content], { type: 'text/csv;charset=utf-8;' });
+  const url     = URL.createObjectURL(blob);
+  const a       = document.createElement('a');
+  a.href        = url;
+  a.download    = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+</script>
+
+</body>
+</html>
